@@ -56,6 +56,9 @@ def show_emotion_history(user):
         st.warning("No emotion history found.")
 
 # Function for activity recommendations
+import random
+
+# Function for self-care activity recommendations
 def get_recommendation(emotion):
     activities = {
         "Happy": ["Go for a walk outside 🌿", "Watch a comedy show 🎭", "Write about your happiness 📖"],
@@ -75,9 +78,12 @@ def get_music_video_recommendation(emotion):
         "Sad": ["https://www.youtube.com/watch?v=KkGVmN68ByU", "https://www.youtube.com/watch?v=RgKAFK5djSk"],
         "Angry": ["https://www.youtube.com/watch?v=6Ejga4kJUts", "https://www.youtube.com/watch?v=09R8_2nJtjg"],
         "Fearful": ["https://www.youtube.com/watch?v=Jk7LPpY8pXM", "https://www.youtube.com/watch?v=l9QpjPHEG_s"],
+        "Disgusted": ["https://www.youtube.com/watch?v=2Vv-BfVoq4g", "https://www.youtube.com/watch?v=8SbUC-UaAxE"],
+        "Surprised": ["https://www.youtube.com/watch?v=VbfpW0pbvaU", "https://www.youtube.com/watch?v=LHCob76kigA"],
         "Neutral": ["https://www.youtube.com/watch?v=VYOjWnS4cMY", "https://www.youtube.com/watch?v=fRh_vgS2dFE"]
     }
-    return random.choice(recommendations.get(emotion, ["https://www.youtube.com/watch?v=dQw4w9WgXcQ"]))
+    return random.choice(recommendations.get(emotion, ["https://www.youtube.com/watch?v=5qap5aO4i9A"]))  # Lo-fi chill music
+
 
 # Streamlit UI
 st.title("Emotion Detection & Well-being Companion 🎤")
