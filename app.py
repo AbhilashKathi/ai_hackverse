@@ -156,7 +156,7 @@ if uploaded_file is not None and user_name.strip():
     # Show music/video recommendation
     video_url = get_music_video_recommendation(predicted_emotion)
     if st.button("🎥 Play a Mood-Based Video"):
-        webbrowser.open(video_url)
+        st.markdown(f"[🎵 Watch Video]({video_url})")
 
 # Sidebar for emotion history
 st.sidebar.markdown("## 📜 Emotion History")
