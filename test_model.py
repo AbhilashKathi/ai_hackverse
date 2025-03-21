@@ -1,27 +1,23 @@
 import numpy as np
 import librosa
-from tensorflow import keras
-from sklearn.preprocessing import LabelEncoder
+import keras
+import pickle
 
-# Load trained model
+# Load model
 model = keras.models.load_model('emotion_model.h5')
 
-# Emotion labels
-encoder = LabelEncoder()
-encoder.classes_ = np.array(['Angry', 'Fearful', 'Happy', 'Neutral', 'Sad'])
+# Load label encoder
+with open("label_encoder.pkl", "rb") as f:
+    label_encoder = pickle.load(f)
 
-# Function to extract features from a new audio file
 def extract_features(file_path):
-    audio, sample_rate = librosa.load(file_path, duration=3, offset=0.5)
-    mfccs = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=40)
+    y, sr = librosa.load(file_path, sr=22050, duration=3, offset=0.5)
+    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40)
     return np.mean(mfccs.T, axis=0)
 
-# Predict emotion from audio
-def predict_emotion(file_path):
-    features = extract_features(file_path).reshape(1, -1)
-    prediction = model.predict(features)
-    emotion = encoder.inverse_transform([np.argmax(prediction)])
-    print(f"🎵 Predicted Emotion: {emotion[0]}")
+file_path = "your_test_audio.wav"
+features = extract_features(file_path).reshape(1, -1)
+prediction = model.predict(features)
+predicted_label = label_encoder.inverse_transform([np.argmax(prediction)])
 
-# Test with your own audio file (rename your file to 'test_audio2.wav')
-predict_emotion('test_audio2.wav')
+print(f"🎵 Predicted Emotion: {predicted_label[0]}")
