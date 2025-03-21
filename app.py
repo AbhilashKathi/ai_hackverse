@@ -127,6 +127,8 @@ if uploaded_file is not None and user_name.strip():
     # Extract features
     features = extract_features(file_path)
     features = np.expand_dims(features, axis=0)
+    print("Feature Shape:", features.shape)
+    print("Expected Shape:", model.input_shape)
 
     # Get model prediction
     predictions = model.predict(features)
