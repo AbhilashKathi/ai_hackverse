@@ -40,23 +40,20 @@ def show_emotion_history(user):
         if user_df.empty:
             st.warning("No records found for this user.")
         else:
-            st.write("### Emotion History for", user)
-            st.dataframe(user_df)
+            st.sidebar.write("## Emotion History")
+            st.sidebar.dataframe(user_df)
 
             # Plot mood graph
-            st.write("### Mood Over Time")
-            plt.figure(figsize=(10, 4))
+            st.sidebar.write("### Mood Over Time")
+            plt.figure(figsize=(8, 3))
             emotion_counts = user_df["Emotion"].value_counts()
             plt.bar(emotion_counts.index, emotion_counts.values, color="skyblue")
             plt.xlabel("Emotion")
             plt.ylabel("Occurrences")
             plt.title("Emotion Frequency")
-            st.pyplot(plt)
+            st.sidebar.pyplot(plt)
     except FileNotFoundError:
-        st.warning("No emotion history found.")
-
-# Function for activity recommendations
-import random
+        st.sidebar.warning("No emotion history found.")
 
 # Function for self-care activity recommendations
 def get_recommendation(emotion):
@@ -74,25 +71,53 @@ def get_recommendation(emotion):
 # Function for music & video recommendations
 def get_music_video_recommendation(emotion):
     recommendations = {
-        "Happy": ["https://www.youtube.com/watch?v=d-diB65scQU", "https://www.youtube.com/watch?v=8Z5EjAmZS1o"],
-        "Sad": ["https://www.youtube.com/watch?v=KkGVmN68ByU", "https://www.youtube.com/watch?v=RgKAFK5djSk"],
-        "Angry": ["https://www.youtube.com/watch?v=6Ejga4kJUts", "https://www.youtube.com/watch?v=09R8_2nJtjg"],
-        "Fearful": ["https://www.youtube.com/watch?v=Jk7LPpY8pXM", "https://www.youtube.com/watch?v=l9QpjPHEG_s"],
-        "Disgusted": ["https://www.youtube.com/watch?v=2Vv-BfVoq4g", "https://www.youtube.com/watch?v=8SbUC-UaAxE"],
-        "Surprised": ["https://www.youtube.com/watch?v=VbfpW0pbvaU", "https://www.youtube.com/watch?v=LHCob76kigA"],
-        "Neutral": ["https://www.youtube.com/watch?v=VYOjWnS4cMY", "https://www.youtube.com/watch?v=fRh_vgS2dFE"]
+        "Happy": [
+            "https://www.youtube.com/watch?v=QlBxRbQqhbU",
+            "https://www.youtube.com/watch?v=8KkKuTCFvzI&t"
+        ],
+        "Sad": [
+            "https://www.youtube.com/watch?v=KYEyIGLRqDg",
+            "https://www.youtube.com/watch?v=xfq_A8nXMsQ",
+            "https://www.youtube.com/watch?v=tYtj9KqvrTo"
+        ],
+        "Angry": [
+            "https://www.youtube.com/watch?v=2bf9K2rkwDk",
+            "https://www.youtube.com/watch?v=glrAq9X7Yxw",
+            "https://www.youtube.com/watch?v=auXNnTmhHsk"
+        ],
+        "Fearful": [
+            "https://www.youtube.com/watch?v=L8UT0iVne24&t",
+            "https://www.youtube.com/watch?v=Dg5SZsUd1P0",
+            "https://www.youtube.com/watch?v=iPE2_iCCo0w"
+        ],
+        "Disgusted": [
+            "https://www.youtube.com/watch?v=AJ1-WE1B2Ss",
+            "https://www.youtube.com/watch?v=ngMP4CtUQ8k",
+            "https://www.youtube.com/watch?v=2WzxLRIj-yM"
+        ],
+        "Surprised": [
+            "https://www.youtube.com/watch?v=8KkKuTCFvzI",
+            "https://www.youtube.com/watch?v=LeoLWuOSGEU",
+            "https://www.youtube.com/watch?v=5nYCOLNDE8g"
+        ],
+        "Neutral": [
+            "https://www.youtube.com/watch?v=1ybDQMPc030",
+            "https://www.youtube.com/watch?v=Y3w2r5JD0u0",
+            "https://www.youtube.com/watch?v=Fp5ghKduTK8"
+        ]
     }
-    return random.choice(recommendations.get(emotion, ["https://www.youtube.com/watch?v=5qap5aO4i9A"]))  # Lo-fi chill music
-
+    return random.choice(recommendations.get(emotion, ["https://www.youtube.com/watch?v=Fp5ghKduTK8"]))
 
 # Streamlit UI
-st.title("Emotion Detection & Well-being Companion 🎤")
+st.set_page_config(page_title="Emotion Detection & Wellness", layout="wide")
+
+st.markdown("<h1 style='text-align: center;'>🎤 Emotion Detection & Well-being Companion</h1>", unsafe_allow_html=True)
 
 # User input for name
 user_name = st.text_input("Enter your name to track your emotions:")
 
 # Upload audio file
-uploaded_file = st.file_uploader("Upload an audio file", type=["wav"])
+uploaded_file = st.file_uploader("🎵 Upload an audio file", type=["wav"])
 
 if uploaded_file is not None and user_name.strip():
     file_path = "temp_audio.wav"
@@ -109,23 +134,29 @@ if uploaded_file is not None and user_name.strip():
     predicted_emotion = label_encoder.inverse_transform([predicted_index])[0]
 
     # Log emotion
-    journal_entry = st.text_area("Write about how you're feeling (Optional)")
-    if st.button("Save Emotion & Journal Entry"):
+    journal_entry = st.text_area("📝 Write about how you're feeling (Optional)")
+    if st.button("💾 Save Emotion & Journal Entry"):
         log_emotion(user_name, predicted_emotion, journal_entry)
-        st.success("Emotion & journal entry saved!")
+        st.success("✅ Emotion & journal entry saved!")
 
-    # Show detected emotion
-    st.subheader(f"Predicted Emotion: {predicted_emotion}")
+    # Display results in a better layout
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("### 🎭 Detected Emotion")
+        st.subheader(f"**{predicted_emotion}**")
 
-    # Show recommendation
-    activity = get_recommendation(predicted_emotion)
-    st.write("💡 **Activity Suggestion:**", activity)
+    with col2:
+        st.markdown("### 💡 Self-care Suggestion")
+        activity = get_recommendation(predicted_emotion)
+        st.write(activity)
 
     # Show music/video recommendation
     video_url = get_music_video_recommendation(predicted_emotion)
-    if st.button("🎵 Play a Mood-Based Video"):
+    if st.button("🎥 Play a Mood-Based Video"):
         webbrowser.open(video_url)
 
-# Show user-specific emotion history
-if st.button("Show My Emotion History") and user_name.strip():
+# Sidebar for emotion history
+st.sidebar.markdown("## 📜 Emotion History")
+if user_name.strip():
     show_emotion_history(user_name)
